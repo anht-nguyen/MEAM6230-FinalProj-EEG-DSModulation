@@ -70,6 +70,8 @@ class Subcribe():
         data = kwargs.get('data')
         print('pm data: {}'.format(data))
 
+
+
     def on_new_pow_data(self, *args, **kwargs):
         data = kwargs.get('data')
         print('pow data: {}'.format(data))
