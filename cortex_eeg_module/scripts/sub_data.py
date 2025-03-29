@@ -1,4 +1,5 @@
 from cortex import Cortex
+from config import YOUR_APP_CLIENT_ID, YOUR_APP_CLIENT_SECRET
 
 class Subcribe():
     """
@@ -227,8 +228,8 @@ class Subcribe():
 def main():
 
     # Please fill your application clientId and clientSecret before running script
-    your_app_client_id = ''
-    your_app_client_secret = ''
+    your_app_client_id = YOUR_APP_CLIENT_ID
+    your_app_client_secret = YOUR_APP_CLIENT_SECRET
 
     s = Subcribe(your_app_client_id, your_app_client_secret)
 

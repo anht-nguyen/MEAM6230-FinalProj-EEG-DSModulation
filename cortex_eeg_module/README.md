@@ -31,6 +31,29 @@ recommend adjusting the code to your purposes.
 ## Cortex Library
 - [`cortex.py`](./cortex.py) - the wrapper lib around EMOTIV Cortex API.
 
+## Susbcribe Data
+- [`sub_data.py`](./sub_data.py) shows data streaming from Cortex: EEG, motion, band power and Performance Metrics.
+- For more details https://emotiv.gitbook.io/cortex-api/data-subscription
+
+## Create record and export to file
+- [`record.py`](./record.py) shows how to create record and export data to CSV or EDF format.
+- For more details https://emotiv.gitbook.io/cortex-api/records
+
+## Inject marker while recording
+- [`marker.py`](./marker.py) shows how to inject marker during a recording.
+- For more details https://emotiv.gitbook.io/cortex-api/markers
+
+
+
+
+
+## EEG data stream labels for EPOC Flex
+{'streamName': 'eeg', 'labels': ['COUNTER', 'INTERPOLATED', 'Cz', 'Fz', 'Fp1', 'F7', 'F3', 'FC1', 'C3', 'FC5', 'FT9', 'T7', 'CP5', 'CP1', 'P3', 'P7', 'PO9', 'O1', 'Pz', 'Oz', 'O2', 'PO10', 'P8', 'P4', 'CP2', 'CP6', 'T8', 'FT10', 'FC6', 'C4', 'FC2', 'F4', 'F8', 'Fp2', 'HighBitFlex', 'SaturationFlag', 'RAW_CQ', 'MARKER_HARDWARE']}  
+
+
+
+
+-----------------------------------------
 ## Cortex App credentials
 App name: anhtn-BCI-1
 your_app_client_id = 'GSOo45bslMJwYoR43a3QCiRiaslR4rKAk7vUSWtL'
