@@ -45,10 +45,13 @@ recommend adjusting the code to your purposes.
 
 
 
-
-
 ## EEG data stream labels for EPOC Flex
 {'streamName': 'eeg', 'labels': ['COUNTER', 'INTERPOLATED', 'Cz', 'Fz', 'Fp1', 'F7', 'F3', 'FC1', 'C3', 'FC5', 'FT9', 'T7', 'CP5', 'CP1', 'P3', 'P7', 'PO9', 'O1', 'Pz', 'Oz', 'O2', 'PO10', 'P8', 'P4', 'CP2', 'CP6', 'T8', 'FT10', 'FC6', 'C4', 'FC2', 'F4', 'F8', 'Fp2', 'HighBitFlex', 'SaturationFlag', 'RAW_CQ', 'MARKER_HARDWARE']}  
+
+![EPOC Flex electrode setup diagram](../docs/images/EPOC_Flex_electrode_setup.png)
+![channel locations](../docs/images/channel_locations.png)
+![channel number](../docs/images/channel_numbers.png)
+
 
 ## NOTES: Performance metrics
 
@@ -57,6 +60,8 @@ recommend adjusting the code to your purposes.
 - Performance metrics has very low sample rate (i.e., 2 if the license contains the scope "pm" and you activate the session before you subscribe; and 0.1 otherwise (1 sample every 10 seconds)). These provided measures are not applicable for this project.
 
 - EPOC Flex requires re-configuration of electrods (following EPOC X electrode set up). This is a hassle.
+
+![EPOC X electrode setup diagram](../docs/images/EPOC_X_electrode_setup.png)
 
 -----------------------------------------
 ## Cortex App credentials
