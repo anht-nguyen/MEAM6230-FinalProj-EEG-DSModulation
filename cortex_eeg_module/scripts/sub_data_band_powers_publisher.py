@@ -4,7 +4,7 @@ import zmq
 import json
 import time
 import numpy as np
-from band_power_helpers import compute_band_powers_all_channels
+from band_power_helpers import compute_relative_band_powers_all_channels, compute_band_power_ratio_all_channels
 
 class Subcribe():
     """
@@ -27,7 +27,7 @@ class Subcribe():
         import zmq
         context = zmq.Context()
         self.publisher = context.socket(zmq.PUB)
-        self.publisher.bind("tcp://*:5555")
+        self.publisher.bind("tcp://*:5556")
         time.sleep(2)  # allow socket to bind
         
         # Buffer to accumulate EEG data over the time window
@@ -83,7 +83,7 @@ class Subcribe():
             window_data = np.array(self.eeg_buffer).T  # shape becomes (NUM_CHANNELS, n_samples)
             
             # Compute band powers over the windowed data
-            band_powers = compute_band_powers_all_channels(window_data)
+            band_powers = compute_relative_band_powers_all_channels(window_data)
             
             # publish the band powers
             self.publish_data(band_powers)
