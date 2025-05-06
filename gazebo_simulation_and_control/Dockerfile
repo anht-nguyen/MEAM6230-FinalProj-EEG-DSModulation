@@ -58,6 +58,11 @@ COPY flov2withhead    /catkin_ws/src/flov2withhead
 COPY movewithhead     /catkin_ws/src/movewithhead
 COPY camera           /catkin_ws/src/camera
 
+RUN catkin_create_pkg attention_bridge rospy std_msgs
+RUN mkdir -p attention_bridge/scripts
+
+COPY attention_bridge/scripts /catkin_ws/src/attention_bridge/scripts
+
 # Add top-level CMakeLists.txt
 RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind_package(catkin REQUIRED)\ncatkin_workspace()" > /catkin_ws/src/CMakeLists.txt
 COPY Readme.md        /catkin_ws/src/Readme.md
@@ -81,8 +86,34 @@ RUN apt-get update && apt-get install -y \
 # Install all dependencies
 RUN rosdep install --from-paths src --ignore-src -y --rosdistro noetic || true
 
-# Build workspace
-RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
+# Install additional dependencies for attention_bridge
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libzmq3-dev \
+    python3-zmq \
+    # ← for rosbridge (optional):
+    ros-noetic-rosbridge-server \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages
+RUN pip3 install --no-cache-dir \
+    pyzmq \
+    # ← only if you want the rosbridge/WebSocket approach:
+    roslibpy
+
+# ─────────── Build your catkin workspace ───────────
+# (so your bridge node lives in /catkin_ws/src/attention_bridge)
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash \
+    && cd /catkin_ws \
+    && catkin_make"
+
+# ─────────── Expose ports ───────────
+# 5557 = ZMQ PUB from attention node → your bridge subscriber
+# 9090 = rosbridge WebSocket (if you use rosbridge approach)
+EXPOSE 5557 9090
+
+
+# # Build workspace
+# RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Make Python scripts executable
 RUN chmod +x /catkin_ws/src/*/script/*.py || true

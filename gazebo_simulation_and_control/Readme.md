@@ -123,6 +123,9 @@ The code and packages are compatible with **ROS Noetic**.
 8. You will see Linux terminal like this:
    ![1744071700343](image/Readme/1744071700343.png)
 
+### Note: 
+To properly use the created docker container, run Xming first, then start the docker container. Run `terminator -u&` should pop up CLI terminal window on Windows.
+
 ## Test MQTT on 1 Windows PC
 
 1. After run the container, **in the container** directly run `$ . run_a_demo_outside.sh `, keep the container running
