@@ -153,7 +153,7 @@ pip install paho-mqtt
 
 1. Create `~/catkin_ws` workspace and `~/catkin_ws/src` folder
 
-2. Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git`
+2. (skip this) Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git` 
 
 3. Install dependency: `sudo apt install ros-noetic-dynamixel-sdk ros-noetic-dynamixel-sdk-examples`
 
