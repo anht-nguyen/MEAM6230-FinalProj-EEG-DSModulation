@@ -54,9 +54,12 @@ def relative_band_power(psd, freqs, band):
     # print(f"Freqs: {freqs}")
 
     idx = np.logical_and(freqs >= low, freqs <= high)
-    relative_power = np.sum(psd[idx]) / np.sum(psd)  # Normalize by total power 
-    # relative_power = np.sum(psd[idx])  # Total power in the band
-    return relative_power
+    # relative_power = np.sum(psd[idx]) / np.sum(psd)  # Normalize by total power 
+    total = np.nansum(psd)
+    if total <= 1e-12:
+        # no energy → treat as zero power
+        return 0.0
+    return np.nansum(psd[idx]) / total
 
 def compute_psd(eeg_data_single_channel, fs=FS, time_windows=TIME_WINDOWS):
     """
@@ -71,7 +74,10 @@ def compute_psd(eeg_data_single_channel, fs=FS, time_windows=TIME_WINDOWS):
     tuple: Frequencies and corresponding PSD values.
     """
     nperseg = time_windows * fs  # Number of samples per segment for Welch's method
-    freqs, psd = welch(eeg_data_single_channel, fs=fs, nperseg=nperseg, nfft=fs*2)
+    nfft    = int(fs * 2)
+    # drop any NaNs before calling Welch:
+    eeg_data_single_channel = np.nan_to_num(eeg_data_single_channel, nan=0.0, posinf=0.0, neginf=0.0)
+    freqs, psd = welch(eeg_data_single_channel, fs=fs, nperseg=nperseg, nfft=nfft)
     return freqs, psd
 
 def compute_relative_band_powers_single_channel(eeg_data_single_channel, band_range, fs=FS, time_windows=TIME_WINDOWS):
@@ -201,56 +207,3 @@ def compute_band_power_ratio_all_channels(eeg_data, band_ratio_pairs=BAND_RATIO_
     return band_power_ratios
 
 
-
-# #------------------------------------------------------
-# # Simulation function to generate synthetic EEG data
-# #------------------------------------------------------
-# import random
-# def simulate_eeg_data(duration_sec, fs, num_channels):
-#     """
-#     Generate simulated EEG data for testing purposes.
-
-#     The simulated data is a combination of a sine wave (to represent a dominant rhythm)
-#     and random noise. Different channels are simulated with different dominant frequencies.
-
-#     Parameters:
-#     duration_sec (int): Duration of the simulated data in seconds.
-
-#     Returns:
-#     np.ndarray: Simulated EEG data with shape (NUM_CHANNELS, duration_sec * FS).
-#     """
-#     n_samples = duration_sec * fs  # Number of samples
-
-#     simulated_data = np.zeros((num_channels, n_samples))
-#     t = np.linspace(0, duration_sec, n_samples, endpoint=False)
-#     # Example dominant frequencies for each channel (representative of delta, theta, alpha, beta)
-#     frequencies = [random.randint(1, 30) for _ in range(num_channels)]  # Random frequencies between 1 and 30 Hz
-#     print(f"Simulated frequencies for channels: {frequencies}")
-
-#     # Generate synthetic EEG data for each channel
-#     for i in range(num_channels):
-#         # Create a sine wave with added noise
-#         simulated_data[i, :] = np.sin(2 * np.pi * frequencies[i] * t) + 0.5 * np.random.randn(n_samples)
-#     return simulated_data
-
-# # Simulation test
-# if __name__ == "__main__":
-#     # Simulate 2 seconds of EEG data
-#     simulated_eeg = simulate_eeg_data(duration_sec=2, fs=FS, num_channels=NUM_CHANNELS)
-#     print("Simulated EEG Data Shape:", simulated_eeg.shape)
-
-#     # Compute relative band powerss for the simulated data
-#     result = compute_relative_band_powers_all_channels(simulated_eeg, NUM_CHANNELS)
-#     print("Computed relative band powerss:")
-#     print(result)
-
-#     # Display generated relative band powers labels
-#     labels = band_powers_labels(FLEX_CHANNEL_LABELS)
-#     print("relative band powers Labels:")
-#     print(labels)
-
-
-#     # Compute band power ratios for the simulated data
-#     result_ratio = compute_band_power_ratio_all_channels(simulated_eeg, BAND_RATIO_PAIRS, NUM_CHANNELS)
-#     print("Computed band power ratios:")    
-#     print(result_ratio)

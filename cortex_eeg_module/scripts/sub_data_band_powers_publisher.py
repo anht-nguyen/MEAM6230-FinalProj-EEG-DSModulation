@@ -128,7 +128,7 @@ def main():
     your_app_client_secret = YOUR_APP_CLIENT_SECRET
 
     s = Subcribe(your_app_client_id, your_app_client_secret)
-    streams = ['eeg', 'mot', 'met', 'pow']
+    streams = ['eeg']
     s.start(streams)
 
     # Keep the script running
