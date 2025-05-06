@@ -139,3 +139,34 @@ To properly use the created docker container, run Xming first, then start the do
 - Camera models are located in the `camera` folder for integration.
 
 ---
+
+# Run robot control stuffs (on RViz + Gazebo simulation)
+
+## Prerequisites:
+
+```
+sudo apt install mosquitto mosquitto-clients
+pip install paho-mqtt
+```
+
+## Installation:
+
+1. Create `~/catkin_ws` workspace and `~/catkin_ws/src` folder
+
+2. Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git`
+
+3. Install dependency: `sudo apt install ros-noetic-dynamixel-sdk ros-noetic-dynamixel-sdk-examples`
+
+4. `cd ~/catkin_ws` then `catkin_make`. Make sure the packages are succesfully built.
+
+5. `source devel/setup.bash`
+
+6. `roslaunch movewithhead full_robot_arm_sim.launch`
+
+7. Open another terminal, run `source devel/setup.bash` then `rosrun flo_humanoid read_write_arms_node`. You should see that the robot arms become stiff.
+
+8. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/dualPosition.py` then run `rosrun movewithhead script/dualPosition.py`
+
+9. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/test.py` then run `rosrun movewithhead script/test.py`
+
+10. To demo an intransitive action performed by the robot: Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py` then run `rosrun movewithhead script/run_a_demo.py`
