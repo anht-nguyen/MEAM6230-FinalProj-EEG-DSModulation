@@ -141,6 +141,14 @@ class MoveItIkDemo:
         self.dt = 1.0 / self.control_rate
 
 
+        # Now start your main loop
+        while not rospy.is_shutdown():
+            if self.mode != "0":
+                self.move(int(self.mode), reference_frame)
+                self.mode = "0"
+                self.client.publish("ros/mqtt/feedback", "A")
+            rospy.sleep(1)
+
     def execute_with_ds(self, arm, target_name, K_diag=K_DIAG, tol=1e-3):
         """
         Move ‘arm’ from its current joint state to named‐target via a linear DS:
@@ -928,43 +936,43 @@ class MoveItIkDemo:
 
 
         elif pose == 21:
-            self.arm_D.set_named_target('clap')
-            self.arm_D.go()           
+            self.execute_with_ds(self.arm_D, 'clap')
+                       
             for i in range(3):
-                self.arm_D.set_named_target('clap_close')
-                self.arm_D.go()
+                self.execute_with_ds(self.arm_D, 'clap_close')
+                
 
-                self.arm_D.set_named_target('clap_open')
-                self.arm_D.go()
-            self.arm_D.set_named_target('clap')
-            self.arm_D.go()
-            self.arm_D.set_named_target('D_home')
-            self.arm_D.go()
+                self.execute_with_ds(self.arm_D, 'clap_open')
+                
+            self.execute_with_ds(self.arm_D, 'clap')
+            
+            self.execute_with_ds(self.arm_D, 'D_home')
+            
 
         elif pose == 22:
     
             for i in range(2):
-                self.arm_D.set_named_target('D_up')
-                self.arm_D.go()
+                self.execute_with_ds(self.arm_D, 'D_up')
+                
 
-                self.arm_D.set_named_target('D_down')
-                self.arm_D.go()
-            self.arm_D.set_named_target('D_up')
-            self.arm_D.go()
-            self.arm_D.set_named_target('D_home')
-            self.arm_D.go()  
+                self.execute_with_ds(self.arm_D, 'D_down')
+                
+            self.execute_with_ds(self.arm_D, 'D_up')
+            
+            self.execute_with_ds(self.arm_D, 'D_home')
+              
 
         elif pose == 23:
 
             for i in range(3):
-                self.arm_D.set_named_target('L_down_R_up')
-                self.arm_D.go()
+                self.execute_with_ds(self.arm_D, 'L_down_R_up')
+                
 
-                self.arm_D.set_named_target('R_down_L_up')
-                self.arm_D.go()
+                self.execute_with_ds(self.arm_D, 'R_down_L_up')
+                
 
-            self.arm_D.set_named_target('D_home')
-            self.arm_D.go()   
+            self.execute_with_ds(self.arm_D, 'D_home')
+               
         elif pose == 24: # 
             self.rgripper_pub.publish(self.gripper_off)
             self.lgripper_pub.publish(3780)
@@ -972,13 +980,13 @@ class MoveItIkDemo:
 
             for i in range(3):
 
-                self.arm_D.set_named_target('d_punch1')
-                self.arm_D.go()   
-                self.arm_D.set_named_target('d_punch2')
-                self.arm_D.go()               
+                self.execute_with_ds(self.arm_D, 'd_punch1')
+                   
+                self.execute_with_ds(self.arm_D, 'd_punch2')
+                               
             
-            self.arm_D.set_named_target('D_home')
-            self.arm_D.go()            
+            self.execute_with_ds(self.arm_D, 'D_home')
+                        
   
             self.lgripper_pub.publish(self.gripper_on)
             rospy.sleep(0.1)
