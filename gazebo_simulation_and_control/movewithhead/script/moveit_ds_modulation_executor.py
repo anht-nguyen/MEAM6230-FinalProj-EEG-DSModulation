@@ -110,19 +110,6 @@ class MoveItIkDemo:
         mqtt_thread = threading.Thread(target=self.start_mqtt_client)
         mqtt_thread.start()
 
-        # ==================== Main Execution Loop ====================
-        # Main loop: Wait for motion commands and execute them
-        while not rospy.is_shutdown():
-            if self.mode != "0":  # If a new mode (motion command) is received
-                self.move(int(self.mode), reference_frame)  # Execute the move function
-                self.mode = "0"  # Reset mode to idle after execution
-                self.client.publish("ros/mqtt/feedback", "A")  # Publish feedback to MQTT
-            rospy.sleep(1)  # Prevent CPU overutilization with sleep
-
-        # ==================== Shutdown MoveIt Commander ====================
-        moveit_commander.roscpp_shutdown()  # Shutdown MoveIt API
-        moveit_commander.os._exit(0)        # Exit the program safely
-
 
         ##### DS-driven interpolator #####
         # Add a DS publisher and state to the class
@@ -141,13 +128,21 @@ class MoveItIkDemo:
         self.dt = 1.0 / self.control_rate
 
 
-        # Now start your main loop
+        # ==================== Main Execution Loop ====================
+        # Main loop: Wait for motion commands and execute them
         while not rospy.is_shutdown():
-            if self.mode != "0":
-                self.move(int(self.mode), reference_frame)
-                self.mode = "0"
-                self.client.publish("ros/mqtt/feedback", "A")
-            rospy.sleep(1)
+            if self.mode != "0":  # If a new mode (motion command) is received
+                self.move(int(self.mode), reference_frame)  # Execute the move function
+                self.mode = "0"  # Reset mode to idle after execution
+                self.client.publish("ros/mqtt/feedback", "A")  # Publish feedback to MQTT
+            rospy.sleep(1)  # Prevent CPU overutilization with sleep
+
+        # ==================== Shutdown MoveIt Commander ====================
+        moveit_commander.roscpp_shutdown()  # Shutdown MoveIt API
+        moveit_commander.os._exit(0)        # Exit the program safely
+
+
+
 
     def execute_with_ds(self, arm, target_name, K_diag=K_DIAG, tol=1e-3):
         """
