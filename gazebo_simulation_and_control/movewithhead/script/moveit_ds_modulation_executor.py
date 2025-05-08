@@ -11,8 +11,10 @@ import numpy as np
 import math
 import threading
 from std_msgs.msg import Float32
+from sensor_msgs.msg import JointState
 
-K_DIAG = [1, 1, 1, 1]  # Diagonal gain matrix for DS modulation
+
+K_DIAG = [5, 5, 5, 5]  # Diagonal gain matrix for DS modulation
 
 class MoveItIkDemo:
     def __init__(self):
@@ -116,10 +118,11 @@ class MoveItIkDemo:
         # Add a DS publisher and state to the class
         # 1. Publisher for DS‐interpolated commands
         self.ds_pub = rospy.Publisher(
-            '/arm_group_controller/command',
+            '/robot_arm_controller/command',
             JointTrajectory,
             queue_size=1
         )
+        # self.dq_pub = rospy.Publisher('/ds_dq', Float32, queue_size=1)
 
         # 2. Default time‐scale factor
         # Subscribe to modulation topic
@@ -135,6 +138,13 @@ class MoveItIkDemo:
         # 3. Control rate for integration
         self.control_rate = rospy.get_param('~control_rate', 100)
         self.dt = 1.0 / self.control_rate
+
+        # storage for live joint states
+        self.latest_joint_names = []
+        self.latest_joint_positions = []
+
+        # subscribe to /joint_states
+        rospy.Subscriber('/joint_states', JointState, self._joint_state_cb, queue_size=1)
 
 
         # ==================== Main Execution Loop ====================
@@ -158,7 +168,13 @@ class MoveItIkDemo:
         """
         # clamp in case someone publishes out-of-bounds
         u = max(0.0, min(1.0, msg.data))
-        self.tau = 0.5 + 1.5 * u
+        self.tau = 0.5 + 5.5 * u
+        # rospy.loginfo(f"[DS] τ = {self.tau:.2f}")
+
+    def _joint_state_cb(self, msg):
+        # keep the most recent joint names & positions
+        self.latest_joint_names = msg.name
+        self.latest_joint_positions = msg.position
 
 
     def execute_with_ds(self, arm, target_name, K_diag=K_DIAG, tol=1e-3):
@@ -167,40 +183,43 @@ class MoveItIkDemo:
         dq = τ · K · (q_goal – q_ref)
         where K = diag(K_diag).
         """
-        # 1) resolve the MoveIt joint goal:
-        arm.set_named_target(target_name)
-        q_goal = np.array(arm.get_current_joint_values())
+        # 1) resolve goal via named targets
+        q_goal_dict = arm.get_named_target_values(target_name)
+        joint_names = arm.get_active_joints()
+        q_goal = np.array([q_goal_dict[j] for j in joint_names])
 
-        # 2) sample current state as q_ref:
-        q_ref = np.array(arm.get_current_joint_values())
+        # 2) get current state from your subscriber
+        while not rospy.is_shutdown() and not self.latest_joint_positions:
+            rospy.sleep(0.01)
+        q_ref = np.array([
+            self.latest_joint_positions[self.latest_joint_names.index(j)]
+            for j in joint_names
+        ])
 
-        # 3) build constant gain matrix:
+        # 3) build gain matrix
         K = np.diag(K_diag)
 
-        # 4) integrate until within tolerance:
+        # 4) DS interpolation loop
         rate = rospy.Rate(self.control_rate)
         while not rospy.is_shutdown():
             error = q_goal - q_ref
             if np.linalg.norm(error) < tol:
                 break
-
-            # linear DS update:
             dq = self.tau * (K.dot(error))
+            rospy.logdebug(f"DS step: q_ref={q_ref}, dq_norm={np.linalg.norm(dq):.3f}")
             q_ref += dq * self.dt
 
-            # publish on‐the‐fly trajectory point:
-            traj = JointTrajectory()
-            traj.joint_names = arm.get_active_joints()
-            pt = JointTrajectoryPoint()
-            pt.positions = q_ref.tolist()
-            pt.time_from_start = rospy.Duration(self.dt)
+            traj = JointTrajectory(joint_names=joint_names)
+            traj.header.stamp = rospy.Time.now() + rospy.Duration(self.dt)
+            pt = JointTrajectoryPoint(positions=q_ref.tolist(),
+                                    time_from_start=rospy.Duration(self.dt))
             traj.points = [pt]
             self.ds_pub.publish(traj)
 
             rate.sleep()
 
-        # 5) final MoveIt “snap” to clear any residual:
-        arm.go(wait=True)
+        # no arm.go() here
+
 
     
 
@@ -288,7 +307,7 @@ class MoveItIkDemo:
 
         # Pose 1: Perform a waving motion
         if pose == 1:
-            for i in range(3):  # Repeat waving motion 3 times
+            for i in range(30):  # Repeat waving motion 3 times
                 self.execute_with_ds(self.arm_R,'R_wave_start')  # Move to wave start position
                 
                 self.execute_with_ds(self.arm_R,'R_wave_end')  # Move to wave end position
