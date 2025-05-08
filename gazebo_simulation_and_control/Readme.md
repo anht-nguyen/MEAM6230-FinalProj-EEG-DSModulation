@@ -153,7 +153,7 @@ pip install paho-mqtt
 
 1. Create `~/catkin_ws` workspace and `~/catkin_ws/src` folder
 
-2. Inside `src`, clone this repo and `git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git`
+2. Inside `src`, clone this repo
 
 3. Install dependency: `sudo apt install ros-noetic-dynamixel-sdk ros-noetic-dynamixel-sdk-examples`
 
@@ -161,12 +161,14 @@ pip install paho-mqtt
 
 5. `source devel/setup.bash`
 
-6. `roslaunch movewithhead full_robot_arm_sim.launch`
+6. `roslaunch movewithhead full_robot_arm_sim_with_ds.launch`
 
-7. Open another terminal, run `source devel/setup.bash` then `rosrun flo_humanoid read_write_arms_node`. You should see that the robot arms become stiff.
+7. Open new terminal and `source devel/setup.bash`. Run `chmod +x src/<...>/gazebo_simulation_and_control/movewithhead/script/dualPosition.py` then run `rosrun movewithhead script/dualPosition.py`
 
-8. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/dualPosition.py` then run `rosrun movewithhead script/dualPosition.py`
+(optional) Use simulated modulation input modeled as a sine wave:  Open new terminal and `source devel/setup.bash`. Run `chmod +x src/<...>/gazebo_simulation_and_control/movewithhead/script/modulation_input_publisher.py`. Run `rosrun movewithhead script/modulation_input_publisher.py`.
+Open a new terminal and `source devel/setup.bash`. Run `rosrun rqt_plot rqt_plot /modulation_input` to plot the modulation input value
 
-9. Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/test.py` then run `rosrun movewithhead script/test.py`
+8. Open new terminal and `source devel/setup.bash`. Run `chmod +x src/<...>/gazebo_simulation_and_control/movewithhead/script/moveit_ds_modulation_executor.py` then run `rosrun movewithhead script/moveit_ds_modulation_executor.py`
 
-10. To demo an intransitive action performed by the robot: Open new terminal and `source devel/setup.bash`. Run `chmod +x /home/anhtn/catkin_ws_2/src/FloSystemV2/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py` then run `rosrun movewithhead script/run_a_demo.py`
+9. Open new terminal and `source devel/setup.bash`. Run `chmod +x src/<...>/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py` and run `ython src/<...>/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py 1` to run action 1 (waving)
+
