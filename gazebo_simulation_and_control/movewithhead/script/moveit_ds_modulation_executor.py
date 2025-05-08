@@ -10,6 +10,7 @@ from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import numpy as np
 import math
 import threading
+from std_msgs.msg import Float32
 
 K_DIAG = [1, 1, 1, 1]  # Diagonal gain matrix for DS modulation
 
@@ -121,7 +122,15 @@ class MoveItIkDemo:
         )
 
         # 2. Default time‐scale factor
-        self.tau = 1.0  # ← you can override this via /modulation_input if you like
+        # Subscribe to modulation topic
+        rospy.Subscriber(
+            '/modulation_input',
+            Float32,
+            self._modulation_cb,
+            queue_size=1
+        )
+
+        # self.tau = 1.0  # ← you can override this via /modulation_input if you like
 
         # 3. Control rate for integration
         self.control_rate = rospy.get_param('~control_rate', 100)
@@ -142,6 +151,14 @@ class MoveItIkDemo:
         moveit_commander.os._exit(0)        # Exit the program safely
 
 
+    def _modulation_cb(self, msg):
+        """
+        Map incoming [0…1] values to τ∈[0.5,2.0]:
+          τ = 0.5 + 1.5 * input
+        """
+        # clamp in case someone publishes out-of-bounds
+        u = max(0.0, min(1.0, msg.data))
+        self.tau = 0.5 + 1.5 * u
 
 
     def execute_with_ds(self, arm, target_name, K_diag=K_DIAG, tol=1e-3):
