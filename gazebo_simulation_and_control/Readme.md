@@ -149,7 +149,7 @@ sudo apt install mosquitto mosquitto-clients
 pip install paho-mqtt
 ```
 
-## Installation:
+## Run full DS execution demo:
 
 1. Create `~/catkin_ws` workspace and `~/catkin_ws/src` folder
 
@@ -172,3 +172,9 @@ Open a new terminal and `source devel/setup.bash`. Run `rosrun rqt_plot rqt_plot
 
 9. Open new terminal and `source devel/setup.bash`. Run `chmod +x src/<...>/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py` and run `ython src/<...>/gazebo_simulation_and_control/movewithhead/script/run_a_demo.py 1` to run action 1 (waving)
 
+OR after step 4, open `gazebo_simulation_and_control` folder inside `src` then run:
+```
+chmod +x run_full_demo.sh
+./run_full_demo.sh
+```
+which will execute all the steps from 5 to end.
