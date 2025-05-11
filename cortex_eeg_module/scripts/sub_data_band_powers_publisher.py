@@ -23,7 +23,7 @@ class Subcribe():
         self.c.bind(new_pow_data=self.on_new_pow_data)
         self.c.bind(inform_error=self.on_inform_error)
         
-        # Setup ZeroMQ publisher for met data on port 5555
+        # Setup ZeroMQ publisher for data on port 5555
         import zmq
         context = zmq.Context()
         self.publisher = context.socket(zmq.PUB)
