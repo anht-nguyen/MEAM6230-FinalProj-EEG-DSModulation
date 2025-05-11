@@ -1,0 +1,13 @@
+<launch>
+  <!-- Drive everything from Gazebo’s /clock -->
+  <param name="use_sim_time" value="true"/>
+
+  
+  <!-- …then your existing includes… -->
+  <include file="$(find flov2withhead)/launch/flov2.launch"/>
+  <include file="$(find movewithhead)/launch/move_group.launch"/>
+  <arg   name="use_rviz" default="true"/>
+  <include file="$(find movewithhead)/launch/moveit_rviz.launch" if="$(arg use_rviz)">
+    <arg name="rviz_config" value="$(find movewithhead)/launch/moveit.rviz"/>
+  </include>
+</launch>
