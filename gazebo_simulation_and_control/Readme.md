@@ -179,29 +179,3 @@ chmod +x run_full_demo.sh
 ```
 which will execute all the steps from 5 to end.
 
-
----
-
-## Docker Built in Windows
-
-1. Ensure you have installed Docker extension in VS code. Right click the **Dockerfile**, select build image, enter a name you want.
-2. Install Docker Desktop, check if this image exist
-3. Open a terminal and type the following command. (Don't forget to change the name of the image you created)
-
-   ```
-   docker run --name your_container_name --user=user --env DISPLAY=host.docker.internal:0 --env QT_X11_NO_MITSHM=1 --volume="C:/:/mnt/c" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --device=/dev/ttyACM0 --privileged --restart=no --runtime=runc -p 1883:1883 -t -d your_img_name
-   ```
-4. If successed, you will see windows like:
-
-   ![1744069322136](image/Readme/1744069322136.png)
-5. Now the container should run on the windows, you can check it in Docker Desktop:
-6. Install Xming from this website [https://sourceforge.net/projects/xming/]()
-7. In the Docker Desktop, enter the running container, use **Exec** windows, run:
-
-   ```
-   terminator -u&
-   ```
-
-   ![1744069240840](image/Readme/1744069240840.png)
-8. You will see Linux terminal like this:
-   ![1744071700343](image/Readme/1744071700343.png)

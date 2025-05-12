@@ -68,6 +68,7 @@ RUN echo "cmake_minimum_required(VERSION 3.0.2)\nproject(flo_v2_workspace)\nfind
 COPY Readme.md        /catkin_ws/src/Readme.md
 COPY run_a_demo.sh /catkin_ws/run_a_demo.sh
 COPY run_a_demo_outside.sh /catkin_ws/run_a_demo_outside.sh
+COPY run_full_demo_DS_mod.sh /catkin_ws/run_full_demo_DS_mod.sh
 
 # Convert all .sh and .py scripts to Unix line endings
 RUN find /catkin_ws -type f \( -name "*.sh" -o -name "*.py" \) -exec dos2unix {} \;

@@ -25,12 +25,12 @@ tmux send-keys -t $SESSION:1 \
 # 4) Window 2: (optional) modulation input publisher
 tmux new-window -t $SESSION:2 -n modInput
 tmux send-keys -t $SESSION:2 \
-  "cd $CATKIN_WS && source devel/setup.bash && chmod +x $SCRIPT_DIR/modulation_input_publisher.py && rosrun movewithhead script/modulation_input_publisher.py" C-m
+  "cd $CATKIN_WS && source devel/setup.bash && chmod +x $SCRIPT_DIR/zmq_to_ros.py && rosrun movewithhead script/zmq_to_ros.py" C-m
 
 # 5) Window 3: plot modulation signal
 tmux new-window -t $SESSION:3 -n rqt_plot
 tmux send-keys -t $SESSION:3 \
-  "cd $CATKIN_WS && source devel/setup.bash && rosrun rqt_plot rqt_plot /modulation_input" C-m
+  "cd $CATKIN_WS && source devel/setup.bash && rosrun rqt_plot rqt_plot /attention/global" C-m
 
 # 6) Window 4: DS modulation executor
 tmux new-window -t $SESSION:4 -n dsExecutor
