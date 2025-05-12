@@ -19,10 +19,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-moveit \
     tmux \
     python3-rosdep \
+    python3-catkin-tools
     software-properties-common \
     # ROS Controllers (for joint_state_controller, etc.)
     ros-noetic-ros-control \
     ros-noetic-ros-controllers \
+    ros-noetic-rqt\
+    ros-noetic-rqt-common-plugins \
+    ros-noetic-rqt-gui \
     dos2unix
     # && rm -rf /var/lib/apt/lists/*
 
@@ -132,4 +136,4 @@ RUN adduser user sudo
 #remove password
 RUN passwd -d user
 
-USER user
+# USER user

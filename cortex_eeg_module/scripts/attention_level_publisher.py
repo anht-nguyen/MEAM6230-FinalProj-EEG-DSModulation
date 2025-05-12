@@ -30,7 +30,7 @@ def normalize_ratio(ratio):
 def compute_attention(pow_list, epsilon=1e-6):
     """
     Compute and normalize attention index per brain region and globally.
-    Raw attention = beta_mean / theta_mean; normalized to [0,1).
+    Raw attention = theta_mean / (beta_mean + epsilon); normalized to [0,1).
 
     Returns dict of normalized attention or None if invalid.
     """
@@ -47,27 +47,31 @@ def compute_attention(pow_list, epsilon=1e-6):
     theta_idx = band_names.index('theta')
     beta_idx  = band_names.index('beta')
 
-    label_to_idx = {lbl: i for i,lbl in enumerate(FLEX_CHANNEL_LABELS)}
+    label_to_idx = {lbl: i for i, lbl in enumerate(FLEX_CHANNEL_LABELS)}
     attention = {}
 
+    # Per-region attention
     for region, labels in BRAIN_REGIONS.items():
         idxs = [label_to_idx[l] for l in labels if l in label_to_idx]
         if not idxs:
             attention[region] = None
             continue
+
         theta_mean = np.mean(pow_array[idxs, theta_idx])
         beta_mean  = np.mean(pow_array[idxs, beta_idx])
-        if theta_mean > epsilon:
-            raw = beta_mean / theta_mean
+
+        if beta_mean > epsilon:
+            # use theta/beta ratio
+            raw = theta_mean / (beta_mean + epsilon)
             attention[region] = normalize_ratio(raw)
         else:
             attention[region] = None
 
-    # Global
+    # Global attention
     global_theta = np.mean(pow_array[:, theta_idx])
     global_beta  = np.mean(pow_array[:, beta_idx])
-    if global_theta > epsilon:
-        raw_g = global_beta / global_theta
+    if global_beta > epsilon:
+        raw_g = global_theta / (global_beta + epsilon)
         attention['global'] = normalize_ratio(raw_g)
     else:
         attention['global'] = None

@@ -125,6 +125,7 @@ class MoveItIkDemo:
         # self.dq_pub = rospy.Publisher('/ds_dq', Float32, queue_size=1)
 
         # 2. Default time‐scale factor
+        self.tau = 1.0  # ← you can override this via /modulation_input if you like
         # Subscribe to modulation topic
         rospy.Subscriber(
             '/attention/global',
@@ -133,7 +134,6 @@ class MoveItIkDemo:
             queue_size=1
         )
 
-        # self.tau = 1.0  # ← you can override this via /modulation_input if you like
 
         # 3. Control rate for integration
         self.control_rate = rospy.get_param('~control_rate', 100)
@@ -307,7 +307,7 @@ class MoveItIkDemo:
 
         # Pose 1: Perform a waving motion
         if pose == 1:
-            for i in range(30):  # Repeat waving motion 3 times
+            for i in range(130):  # Repeat waving motion 3 times
                 self.execute_with_ds(self.arm_R,'R_wave_start')  # Move to wave start position
                 
                 self.execute_with_ds(self.arm_R,'R_wave_end')  # Move to wave end position

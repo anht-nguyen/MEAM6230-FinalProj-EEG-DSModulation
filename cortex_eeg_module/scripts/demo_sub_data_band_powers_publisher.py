@@ -18,7 +18,7 @@ HISTORY_LEN = 100      # windows to keep
 # Synthetic attention conditions: low, medium, high (theta_amp, beta_amp)
 CONDITIONS = [
     {'name': 'low_attention',    'theta_amp': 1.0, 'beta_amp': 0.1},
-    {'name': 'medium_attention', 'theta_amp': 0.5, 'beta_amp': 0.5},
+    # {'name': 'medium_attention', 'theta_amp': 0.5, 'beta_amp': 0.5},
     {'name': 'high_attention',   'theta_amp': 0.1, 'beta_amp': 1.0},
 ]
 cond_idx = 0
@@ -35,7 +35,7 @@ def generate_synthetic_eeg_window(duration, fs, n_channels, theta_amp, beta_amp)
         sig = (theta_amp*np.sin(2*np.pi*theta_f*t+ph[0]) +
                0.3*np.sin(2*np.pi*alpha_f*t+ph[1]) +
                beta_amp*np.sin(2*np.pi*beta_f*t+ph[2]))
-        data[ch] = sig + 0.5*np.random.randn(len(t))
+        data[ch] = sig + 0.1*np.random.randn(len(t))
     return t, data
 
 
@@ -103,7 +103,7 @@ def main():
             ax_eeg.clear()
             ax_eeg.set_facecolor(shade)
             for ch in range(NUM_CHANNELS): ax_eeg.plot(t_win,eeg_win[ch],color='gray',alpha=0.3)
-            ax_eeg.set_title(f"{cond['name']} att={attention_idx:.2f}")
+            # ax_eeg.set_title(f"{cond['name']}")
             fig_eeg.canvas.draw(); fig_eeg.canvas.flush_events()
 
             # Update history

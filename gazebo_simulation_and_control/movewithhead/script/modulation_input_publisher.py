@@ -17,10 +17,10 @@ def main():
     while not rospy.is_shutdown():
         t = rospy.Time.now().to_sec() - t0
         # sine wave between [offset-amp, offset+amp]
-        u = offset + amp * math.sin(2.0 * math.pi * freq * t)
+        val = offset + amp * math.sin(2.0 * math.pi * freq * t)
         # ensure within [0,1]
-        u = max(0.0, min(1.0, u))
-        pub.publish(Float32(u))
+        val = max(0.0, min(1.0, val))
+        pub.publish(Float32(val))
         rate.sleep()
 
 if __name__ == '__main__':
