@@ -5,7 +5,7 @@ import math
 
 def main():
     rospy.init_node('modulation_simulator')
-    pub = rospy.Publisher('/modulation_input', Float32, queue_size=1)
+    pub = rospy.Publisher('/attention/global', Float32, queue_size=1)
     rate_hz = rospy.get_param('~rate', 20)          # how fast we publish
     freq = rospy.get_param('~sin_freq', 0.1)        # oscillation freq (Hz)
     amp = rospy.get_param('~amplitude', 0.5)        # amplitude around 0.5

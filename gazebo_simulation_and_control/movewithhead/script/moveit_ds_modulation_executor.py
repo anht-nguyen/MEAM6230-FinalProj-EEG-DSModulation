@@ -127,7 +127,7 @@ class MoveItIkDemo:
         # 2. Default time‐scale factor
         # Subscribe to modulation topic
         rospy.Subscriber(
-            '/modulation_input',
+            '/attention/global',
             Float32,
             self._modulation_cb,
             queue_size=1
