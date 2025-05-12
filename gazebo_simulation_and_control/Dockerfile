@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-noetic-moveit \
     tmux \
     python3-rosdep \
-    python3-catkin-tools
+    python3-catkin-tools \
     software-properties-common \
     # ROS Controllers (for joint_state_controller, etc.)
     ros-noetic-ros-control \
@@ -109,16 +109,13 @@ RUN pip3 install --no-cache-dir \
 # (so your bridge node lives in /catkin_ws/src/attention_bridge)
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash \
     && cd /catkin_ws \
-    && catkin_make"
+    && catkin build"
 
 # ─────────── Expose ports ───────────
 # 5557 = ZMQ PUB from attention node → your bridge subscriber
 # 9090 = rosbridge WebSocket (if you use rosbridge approach)
 EXPOSE 5557 9090
 
-
-# # Build workspace
-# RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Make Python scripts executable
 RUN chmod +x /catkin_ws/src/*/script/*.py || true
